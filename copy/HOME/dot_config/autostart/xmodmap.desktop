@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Replace sterling with numbersign on my UK keyboard
+Exec=/usr/bin/xmodmap -e "keycode  12 = 3 numbersign 3 numbersign twosuperior onethird numbersign sterling 3 numbersign"
+StartupNotify=false
+Terminal=false
+X-GNOME-Autostart-enabled=true

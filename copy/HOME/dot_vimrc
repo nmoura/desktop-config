@@ -1,0 +1,29 @@
+" plugin gruvbox
+autocmd vimenter * ++nested colorscheme gruvbox
+set background=dark
+
+" plugin indentLine
+let g:indentLine_char = '┊'
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+" syntastic plugin
+" configuration suitable for new users
+" https://github.com/vim-syntastic/syntastic#settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" my customizations
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set autoindent
+
+" set backspace=indent,eol,start

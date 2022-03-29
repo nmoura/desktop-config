@@ -1,0 +1,122 @@
+- hosts: 127.0.0.1
+  vars:
+    vim_plugins_dir: "~/.vim/pack/default/start"
+
+  tasks:
+
+  - name: Allow group sudo to run passwordless sudo commands
+    copy:
+      dest: /etc/sudoers.d/sudo
+      mode: '0600'
+      content: |
+        %sudo   ALL=(ALL:ALL) NOPASSWD: ALL
+      validate: /usr/sbin/visudo -cf %s
+    become: true
+
+  - name: Sets hostname
+    hostname:
+      name: journey.lan
+    become: true
+
+  - name: Install packages from OS default package management
+    package:
+      name:
+        - autofs
+        - cifs-utils
+        - curl
+        - git
+        - gthumb
+        - keepassxc
+        - libreoffice
+        - net-tools
+        - obs-studio
+        - openssh-server
+        - piper # interface to configure mouse different buttons
+        - python3.8-venv
+        - python3-pip
+        - python-is-python3
+        - screen
+        - sqlite3
+        - strace
+        - terminator
+        - texlive-latex-base
+        - tree
+        - ubuntu-restricted-extras
+        - vim
+        - vlc
+        - zeal
+    become: true
+
+  - name: Enable and start sshd server
+    service:
+      name: ssh
+      enabled: yes
+      state: started
+
+  - name: Install Heroku via Snap
+    community.general.snap:
+      name: heroku
+      classic: true
+    become: true
+
+  - name: Install PyCharm via Snap
+    community.general.snap:
+      name: pycharm-community
+      classic: yes
+    become: true
+
+  - name: Install vim plugins
+    git:
+      repo: "{{ item.repo }}"
+      dest: "{{ item.dest }}"
+    register: vimplugin
+    with_items:
+      - { repo: "https://github.com/morhetz/gruvbox.git", dest: "{{ vim_plugins_dir }}/gruvbox" }
+      - { repo: "https://github.com/Yggdroot/indentLine.git", dest: "{{ vim_plugins_dir }}/indentLine" }
+      - { repo: "https://github.com/preservim/nerdtree.git", dest: "{{ vim_plugins_dir }}/nerdtree" }
+      - { repo: "https://github.com/kien/rainbow_parentheses.vim", dest: "{{ vim_plugins_dir }}/rainbow_parentheses" }
+      - { repo: "https://github.com/vim-airline/vim-airline.git", dest: "{{ vim_plugins_dir }}/vim-airline" }
+      - { repo: "https://github.com/airblade/vim-gitgutter.git", dest: "{{ vim_plugins_dir }}/vim-gitgutter" }
+      - { repo: "https://github.com/mhinz/vim-startify.git", dest: "{{ vim_plugins_dir }}/vim-startify" }
+      - { repo: "https://github.com/vim-syntastic/syntastic.git", dest: "{{ vim_plugins_dir }}/syntastic" }
+      - { repo: "https://github.com/vimwiki/vimwiki.git", dest: "{{ vim_plugins_dir }}/vimwiki" }
+
+  - name: Generate help docs for vim plugins
+    command: vim -u NONE -c "helptags  ~/.vim/pack/default/start/{{ item }}/doc" -c "q"
+    loop: "{{ ['indentLine', 'nerdtree', 'syntastic', 'vim-airline', 'vim-gitgutter', 'vim-startify', 'vimwiki'] }}"
+    when: vimplugin is changed
+
+  - name: Copy .vimrc config file
+    copy:
+      src: copy/HOME/dot_vimrc
+      dest: ~/.vimrc
+
+  - name: Copy .config/
+    copy:
+      src: copy/HOME/dot_config/
+      dest: ~/.config/
+
+  - name: Copy monitor-screensaver-audio.sh to ~/.local/bin
+    copy:
+      src: copy/HOME/dot_local/bin/monitor-screensaver-audio.sh
+      dest: ~/.local/bin/
+      mode: 0775
+
+  - name: Copy autofs config to /etc/auto.master.d
+    copy:
+      src: copy/ROOT/etc/auto.master.d/
+      dest: /etc/auto.master.d/
+    become: true
+
+  - name: Copy .bash_* to ~/
+    copy:
+      src: copy/HOME/{{ item.src }}
+      dest: ~/{{ item.dst }}
+    with_items:
+      - { src: dot_bash_aliases, dst: .bash_aliases }
+      - { src: dot_bash_functions, dst: .bash_functions }
+
+  - name: Install Python pip libraries
+    pip:
+      chdir: .
+      requirements: requirements.txt

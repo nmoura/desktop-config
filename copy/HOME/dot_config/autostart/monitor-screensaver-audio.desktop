@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/nmoura/.local/bin/monitor-screensaver-audio.sh
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Monitor Screensaver Audio
+Comment=

@@ -1,0 +1,22 @@
+[global_config]
+[keybindings]
+  split_horiz = <Shift><Super>d
+  split_vert = <Super>d
+  copy = <Super>c
+  paste = <Super>v
+  search = <Super>f
+  scaled_zoom = <Shift><Super>Return
+[profiles]
+  [[default]]
+    background_color = "#282828"
+    cursor_color = "#aaaaaa"
+    foreground_color = "#ebdbb2"
+[layouts]
+  [[default]]
+    [[[window0]]]
+      type = Window
+      parent = ""
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+[plugins]

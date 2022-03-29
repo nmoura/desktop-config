@@ -1,0 +1,1 @@
+nas -fstype=cifs,vers=3.0,rw,credentials=/home/nmoura/.smbpwd,uid=1000,gid=1000,mfsymlinks ://192.168.1.1/nas
